@@ -23,4 +23,6 @@ const createMoviesBlockTemplate = () => {
   );
 };
 
-export {createMoviesBlockTemplate};
+export {
+  createMoviesBlockTemplate
+};
