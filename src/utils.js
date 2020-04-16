@@ -1,13 +1,28 @@
-const makeWordCapitalized = (word) => {
+import {ESC_KEYCODE, ENTER_KEYCODE} from './const.js'
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const isEscKeyDown = (evt, action) => {
+  evt.keyCode === ESC_KEYCODE ? action() : ``;
+};
+
+export const isEnterKeyDown = (evt, action) => {
+  evt.keyCode === ENTER_KEYCODE ? action() : ``;
+};
+
+export const makeWordCapitalized = (word) => {
   const string = word.slice(1);
   return word = word[0].toUpperCase() + string;
 };
 
-const getRandomItem = (items) => {
+export const getRandomItem = (items) => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
-const getRandomNumber = (min, max, decimal) => {
+export const getRandomNumber = (min, max, decimal) => {
   let number = min + Math.random() * (max + 1 - min);
 
   decimal ? number = number.toFixed(1) : number = Math.floor(number);
@@ -17,7 +32,7 @@ const getRandomNumber = (min, max, decimal) => {
   return number;
 };
 
-const insertSpacesIntoNumber = (number) => {
+export const insertSpacesIntoNumber = (number) => {
   const gapSize = 3;
   let formattedNumber = ``;
   let num = number.toString();
@@ -28,7 +43,7 @@ const insertSpacesIntoNumber = (number) => {
   return formattedNumber;
 };
 
-const getRandomText = (text, min, max) => {
+export const getRandomText = (text, min, max) => {
   const sentences = text.split(`.`).filter(Boolean);
 
   const qty = getRandomNumber(min, max);
@@ -43,7 +58,7 @@ const getRandomText = (text, min, max) => {
   return array.join('. ') + `.`;
 };
 
-const randomCommentsQty = () => {
+export const randomCommentsQty = () => {
   const commentsQty = getRandomNumber(MIN_COMMENTS_QTY, MAX_COMMENTS_QTY);
   if (commentsQty === 1) {
     return `${commentsQty} comment`;
@@ -51,16 +66,25 @@ const randomCommentsQty = () => {
   return `${commentsQty} comments`;
 };
 
-const maybePluralize = (noun, number, suffix = `s`) => {
+export const maybePluralize = (noun, number, suffix = `s`) => {
   const resultWord = `${noun}${number !== 1 ? suffix : ``}`;
   return resultWord;
 };
 
-export {
-  makeWordCapitalized,
-  getRandomItem,
-  getRandomText,
-  getRandomNumber,
-  insertSpacesIntoNumber,
-  maybePluralize
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
 };

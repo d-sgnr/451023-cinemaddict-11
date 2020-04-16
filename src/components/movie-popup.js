@@ -1,5 +1,6 @@
 import {
-  maybePluralize
+  maybePluralize,
+  createElement
 } from '../utils.js';
 
 const createMoviePopupMarkup = (movie) => {
@@ -181,6 +182,26 @@ const createMoviePopupTemplate = (movie) => {
   );
 };
 
-export {
-  createMoviePopupTemplate
-};
+export default class MoviePopup {
+  constructor(movie) {
+    this._movie = movie;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMoviePopupTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
