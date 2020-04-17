@@ -39,7 +39,6 @@ const generateMovie = () => {
   const randomDay = getRandomNumber(1, 31);
   const randomMonth = getRandomItem(MONTH_NAMES);
   const randomAge = getRandomItem(AGE);
-
   const randomCommentsQty = getRandomNumber(MIN_COMMENTS_QTY, MAX_COMMENTS_QTY);
 
   return {

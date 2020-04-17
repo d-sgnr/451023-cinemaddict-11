@@ -1,12 +1,11 @@
 import {
-  MAX_DESCRIPTION_SYMBOLS
-} from '../const.js';
-import {
-  maybePluralize
+  maybePluralize,
+  createElement
 } from '../utils.js';
 
-const createMovieTemplate = (movie) => {
+import {MAX_DESCRIPTION_SYMBOLS} from '../const.js';
 
+const createMovieTemplate = (movie) => {
   const {
     title,
     rating,
@@ -59,6 +58,26 @@ const createMovieTemplate = (movie) => {
   );
 };
 
-export {
-  createMovieTemplate
-};
+export default class Movie {
+  constructor(movie) {
+    this._movie = movie;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMovieTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,6 +1,9 @@
-const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
+export const ESC_KEYCODE = 27;
+export const ENTER_KEYCODE = 13;
 
-const POSTERS = [
+export const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
+
+export const POSTERS = [
   `made-for-each-other.png`,
   `popeye-meets-sinbad.png`,
   `sagebrush-trail.jpg`,
@@ -10,7 +13,7 @@ const POSTERS = [
   `the-man-with-the-golden-arm.jpg`
 ];
 
-const TITLES = [
+export const TITLES = [
   `The Dance of Life`,
   `Sagebrush Trail`,
   `The Man with the Golden Arm`,
@@ -20,7 +23,7 @@ const TITLES = [
   `Made for Each Other`
 ];
 
-const GENRES = [
+export const GENRES = [
   `Drama`,
   `Mystery`,
   `Comedy`,
@@ -29,7 +32,7 @@ const GENRES = [
   `Cartoon`
 ];
 
-const YEARS = [
+export const YEARS = [
   `1929`,
   `1956`,
   `1972`,
@@ -38,7 +41,7 @@ const YEARS = [
   `1942`
 ];
 
-const DIRECTORS = [
+export const DIRECTORS = [
   `Anthony Mann`,
   `Quentin Tarantino`,
   `Guy Ritchie`,
@@ -47,19 +50,19 @@ const DIRECTORS = [
   `Tom Ford`
 ];
 
-const WRITERS = [
+export const WRITERS = [
   `Anne Wigton`,
   `Heinz Herald`,
   `Richard Weil`
 ];
 
-const ACTORS = [
+export const ACTORS = [
   `Erich von Stroheim`,
   `Mary Beth Hughes`,
   `Dan Duryea`
 ];
 
-const COUNTRIES = [
+export const COUNTRIES = [
   `USA`,
   `Russia`,
   `France`,
@@ -68,7 +71,7 @@ const COUNTRIES = [
   `Italy`
 ];
 
-const DATES = [
+export const DATES = [
   `15 March 1972`,
   `12 December 1931`,
   `2 September 1924`,
@@ -77,42 +80,42 @@ const DATES = [
   `22 July 1972`
 ];
 
-const AGE = [
+export const AGE = [
   `3+`,
   `12+`,
   `16+`,
   `18+`
 ];
 
-const COMMENTS = [
+export const COMMENTS = [
   `Interesting setting and a good cast`,
   `Booooooooooring`,
   `Very very old. Meh`,
   `Almost two hours? Seriously?`
 ];
 
-const AUTHORS = [
+export const AUTHORS = [
   `John Doe`,
   `Tim Macoveev`,
   `Steeve Jobes`,
   `Michael Jordan`
 ];
 
-const AVATARS = [
+export const AVATARS = [
   `smile.png`,
   `sleeping.png`,
   `angry.png`,
   `puke.png`
 ];
 
-const RATINGS = [
+export const RATINGS = [
   ` `,
   `novice`,
   `fan`,
   `movie buff`
 ];
 
-const MONTH_NAMES = [
+export const MONTH_NAMES = [
   `January`,
   `February`,
   `March`,
@@ -127,52 +130,34 @@ const MONTH_NAMES = [
   `December`
 ];
 
-const FILTERS_NAMES = [
+export const FILTERS_NAMES = [
   `All Movies`,
   `Watchlist`,
   `History`,
   `Favorites`
 ];
 
-const MAX_DESCRIPTION_SYMBOLS = 140;
+export const MAX_DESCRIPTION_SYMBOLS = 140;
 
-const MIN_RATING = 1;
-const MAX_RATING = 10;
+export const MIN_RATING = 1;
+export const MAX_RATING = 10;
 
-const MIN_SENTENCES_QTY = 1;
-const MAX_SENTENCES_QTY = 5;
+export const MIN_SENTENCES_QTY = 1;
+export const MAX_SENTENCES_QTY = 5;
 
-const MIN_COMMENTS_QTY = 0;
-const MAX_COMMENTS_QTY = 5;
+export const MIN_COMMENTS_QTY = 0;
+export const MAX_COMMENTS_QTY = 5;
 
-const MIN_MOVIES_TOTAL_QTY = 120423;
-const MAX_MOVIES_TOTAL_QTY = 245535;
+export const MIN_MOVIES_TOTAL_QTY = 120423;
+export const MAX_MOVIES_TOTAL_QTY = 245535;
 
-export {
-  DESCRIPTION_TEXT,
-  POSTERS,
-  TITLES,
-  GENRES,
-  YEARS,
-  DATES,
-  DIRECTORS,
-  ACTORS,
-  WRITERS,
-  COMMENTS,
-  AUTHORS,
-  AVATARS,
-  RATINGS,
-  COUNTRIES,
-  MONTH_NAMES,
-  AGE,
-  FILTERS_NAMES,
-  MIN_RATING,
-  MAX_RATING,
-  MIN_SENTENCES_QTY,
-  MAX_SENTENCES_QTY,
-  MIN_COMMENTS_QTY,
-  MAX_COMMENTS_QTY,
-  MIN_MOVIES_TOTAL_QTY,
-  MAX_MOVIES_TOTAL_QTY,
-  MAX_DESCRIPTION_SYMBOLS
-};
+export const MOVIES_COUNT = 19;
+export const FIRST_MOVIE = 0;
+export const SHOWING_MOVIES_COUNT_ON_START = 5;
+export const SHOWING_TASKS_COUNT_BY_BUTTON = 5;
+
+export const MOVIES_COUNT_EXTRA = 2;
+export const TOP_RATED_BLOCK = 0;
+export const MOST_COMMENTED_BLOCK = 1;
+export const FIRST_EXTRA_LIST_TITLE = `Top rated`;
+export const SECOND_EXTRA_LIST_TITLE = `Most commented`;
