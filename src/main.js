@@ -9,6 +9,7 @@ import MoviesListComponent from './components/movies-list.js';
 import MoviesListExtraComponent from './components/movies-list-extra.js';
 import MoviesQuantityComponent from './components/movies-quantity.js';
 import SortComponent from './components/sort.js';
+import NoMoviesComponent from './components/no-movies.js';
 
 import {
   generateMovies
@@ -135,7 +136,15 @@ const renderMovie = (moviesListElement, movie) => {
 //MOVIES
 
 const renderMoviesBlock = (moviesBlockComponent, movies) => {
+
   render(moviesBlockComponent.getElement(), new MoviesListComponent().getElement(), RenderPosition.BEFOREEND);
+
+  const moviesMainContainerElement = moviesBlockComponent.getElement().querySelector(`.films-list`);
+
+  if (movies.length === 0) {
+    render(moviesMainContainerElement, new NoMoviesComponent().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
 
   //MOVIES
 
@@ -149,8 +158,6 @@ const renderMoviesBlock = (moviesBlockComponent, movies) => {
     });
 
   //LOAD-MORE-BUTTON
-
-  const moviesMainContainerElement = moviesBlockComponent.getElement().querySelector(`.films-list`);
 
   const loadMoreButtonComponent = new LoadMoreButtonComponent();
   const loadMoreButtonElement = loadMoreButtonComponent.getElement();
