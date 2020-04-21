@@ -4,7 +4,7 @@ import {
 import {
   getRandomItem,
   makeWordCapitalized
-} from '../utils.js';
+} from '../utils/common.js';
 
 const generateAvatar = () => {
   const randomRating = makeWordCapitalized(getRandomItem(RATINGS));

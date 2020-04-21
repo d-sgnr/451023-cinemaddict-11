@@ -1,8 +1,9 @@
+import AbstractComponent from './abstract-component.js';
+
 import {
   getRandomNumber,
-  insertSpacesIntoNumber,
-  createElement
-} from '../utils.js';
+  insertSpacesIntoNumber
+} from '../utils/common.js';
 
 import {
   MIN_MOVIES_TOTAL_QTY,
@@ -19,24 +20,8 @@ const createMoviesQuantityTemplate = () => {
   );
 };
 
-export default class MoviesQuantity {
-  constructor() {
-    this._element = null;
-  }
-
+export default class MoviesQuantity extends AbstractComponent {
   getTemplate() {
     return createMoviesQuantityTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

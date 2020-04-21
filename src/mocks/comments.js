@@ -6,7 +6,7 @@ import {
 
 import {
   getRandomItem
-} from '../utils.js';
+} from '../utils/common.js';
 
 const generateComment = () => {
   const randomComment = getRandomItem(COMMENTS);

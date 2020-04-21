@@ -154,7 +154,7 @@ export const MAX_MOVIES_TOTAL_QTY = 245535;
 export const MOVIES_COUNT = 19;
 export const FIRST_MOVIE = 0;
 export const SHOWING_MOVIES_COUNT_ON_START = 5;
-export const SHOWING_TASKS_COUNT_BY_BUTTON = 5;
+export const SHOWING_MOVIES_COUNT_BY_BUTTON = 5;
 
 export const MOVIES_COUNT_EXTRA = 2;
 export const TOP_RATED_BLOCK = 0;
