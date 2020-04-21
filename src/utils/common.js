@@ -81,7 +81,11 @@ export const maybePluralize = (noun, number, suffix = `s`) => {
 };
 
 export const sortArray = (property, order = `-1`) => {
-  const sortOrder = order;
+  let sortOrder = order;
+
+  if (order === `ascending`) {
+    sortOrder = 1;
+  }
 
   if (property[0] === `-`) {
     sortOrder = 1;
