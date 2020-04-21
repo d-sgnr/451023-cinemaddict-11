@@ -22,7 +22,7 @@ import {
   getRandomItem,
   getRandomText,
   getRandomNumber
-} from '../utils.js';
+} from '../utils/common.js';
 
 const generateMovie = () => {
   const randomPoster = getRandomItem(POSTERS);

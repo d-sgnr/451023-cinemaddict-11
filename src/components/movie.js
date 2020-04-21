@@ -1,9 +1,12 @@
-import {
-  maybePluralize,
-  createElement
-} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
-import {MAX_DESCRIPTION_SYMBOLS} from '../const.js';
+import {
+  maybePluralize
+} from '../utils/common.js';
+
+import {
+  MAX_DESCRIPTION_SYMBOLS
+} from '../const.js';
 
 const createMovieTemplate = (movie) => {
   const {
@@ -58,26 +61,20 @@ const createMovieTemplate = (movie) => {
   );
 };
 
-export default class Movie {
+export default class Movie extends AbstractComponent {
   constructor(movie) {
+    super();
     this._movie = movie;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createMovieTemplate(this._movie);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  setMovieCardClickHandler(handler) {
+    const movieCardClickable = this.getElement().querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`);
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    movieCardClickable
+      .forEach((element) => element.addEventListener(`click`, handler));
   }
 }

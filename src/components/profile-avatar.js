@@ -1,6 +1,4 @@
-import {
-  createElement
-} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createAvatarTemplate = (avatar) => {
   const {
@@ -16,26 +14,13 @@ const createAvatarTemplate = (avatar) => {
   );
 };
 
-export default class ProfileAvatar {
+export default class ProfileAvatar extends AbstractComponent {
   constructor(avatar) {
+    super();
     this._avatar = avatar;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createAvatarTemplate(this._avatar);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
