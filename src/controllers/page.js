@@ -1,22 +1,22 @@
-import CommentComponent from '../components/comment.js';
-import LoadMoreButtonComponent from '../components/load-more-button.js';
-import MoviePopupComponent from '../components/movie-popup.js';
-import MovieComponent from '../components/movie.js';
 import MoviesListComponent from '../components/movies-list.js';
+import MoviesListContainerComponent from '../components/movies-list-container.js';
 import MoviesListExtraComponent from '../components/movies-list-extra.js';
-import SortComponent, {SortType} from '../components/sort.js';
+
+import LoadMoreButtonComponent from '../components/load-more-button.js';
+import SortComponent, {
+  SortType
+} from '../components/sort.js';
 import NoMoviesComponent from '../components/no-movies.js';
 
+import MovieController from '../controllers/movie.js';
+
 import {
-  generateComments
-} from '../mocks/comments.js';
-import {
-  isEscKeyDown,
   sortArray
 } from '../utils/common.js';
 import {
   render,
-  remove
+  remove,
+  RenderPosition
 } from '../utils/render.js';
 
 import {
@@ -29,50 +29,11 @@ import {
   SECOND_EXTRA_LIST_TITLE
 } from '../const.js';
 
-const renderMovie = (moviesListElement, movie) => {
-
-  const siteBodyElement = document.querySelector(`body`);
-  const movieComponent = new MovieComponent(movie);
-
-  render(moviesListElement, movieComponent);
-
-  // POPUP
-
-  const renderMoviePopup = () => {
-    const moviePopupComponent = new MoviePopupComponent(movie);
-
-    render(siteBodyElement, moviePopupComponent);
-
-    // POPUP-CLOSE
-
-    const closeMoviePopup = () => {
-      document.removeEventListener(`keydown`, onEscKeyDownPopupClose);
-      remove(moviePopupComponent);
-    };
-
-    const onEscKeyDownPopupClose = (evt) => {
-      isEscKeyDown(evt, closeMoviePopup);
-    };
-
-    moviePopupComponent.setMoviePopupCloseClickHandler(closeMoviePopup);
-
-    document.addEventListener(`keydown`, onEscKeyDownPopupClose);
-
-    // COMMENTS
-
-    const comments = generateComments(movie.commentsQty);
-
-    const commentsListPopupElement = document.querySelector(`.film-details__comments-list`);
-
-    for (let i = 0; i < movie.commentsQty; i++) {
-      render(commentsListPopupElement, new CommentComponent(comments[i]));
-    }
-  };
-
-  // POPUP-OPEN
-
-  movieComponent.setMovieCardClickHandler(() => {
-    renderMoviePopup(movie);
+const renderMovies = (moviesListElement, movies, onDataChange, onViewChange) => {
+  return movies.map((movie) => {
+    const movieController = new MovieController(moviesListElement, onDataChange, onViewChange);
+    movieController.render(movie);
+    return movieController;
   });
 };
 
@@ -87,6 +48,9 @@ const getSortedMovies = (movies, sortType, from, to) => {
     case SortType.RATING:
       sortedMovies = showingMovies.sort(sortArray(`rating`));
       break;
+    case SortType.COMMENTS:
+      sortedMovies = showingMovies.sort(sortArray(`commentsQty`));
+      break;
     case SortType.DEFAULT:
       sortedMovies = showingMovies;
       break;
@@ -99,107 +63,127 @@ export default class PageController {
   constructor(container) {
     this._container = container;
 
+    this._movies = [];
+    this._showedMoviesControllers = [];
+
+    this._showingMoviesCountOnStart = SHOWING_MOVIES_COUNT_ON_START;
+
     this._noMoviesComponent = new NoMoviesComponent();
     this._sortComponent = new SortComponent();
+
     this._moviesListComponent = new MoviesListComponent();
+    this._moviesListContainerComponent = new MoviesListContainerComponent();
+
     this._moviesListExtraTopRatedComponent = new MoviesListExtraComponent(FIRST_EXTRA_LIST_TITLE);
     this._moviesListExtraMostCommentedComponent = new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE);
+
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
+
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
   }
 
   render(movies) {
-    const container = this._container;
-    const moviesMainContainerElement = this._moviesListComponent.getElement();
+    this._movies = movies;
 
-    // SORT
-
-    render(container.getElement(), this._sortComponent);
-
-    // LOAD-MORE-BUTTON
-
-    const renderLoadMoreButton = () => {
-      if (showingMoviesCount >= movies.length) {
-        return;
-      }
-
-      render(moviesMainContainerElement, this._loadMoreButtonComponent);
-
-      this._loadMoreButtonComponent.setClickHandler(() => {
-        const prevMoviesCount = showingMoviesCount;
-        showingMoviesCount = showingMoviesCount + SHOWING_MOVIES_COUNT_BY_BUTTON;
-
-        movies.slice(prevMoviesCount, showingMoviesCount)
-          .forEach((movie) => renderMovie(moviesListElement, movie));
-
-        if (showingMoviesCount >= movies.length) {
-          remove(this._loadMoreButtonComponent);
-        }
-      });
-    };
-
-    render(container.getElement(), this._moviesListComponent);
-
-    if (movies.length === 0) {
-      render(moviesMainContainerElement, this._noMoviesComponent);
+    if (this._movies.length === 0) {
+      render(this._container.getElement(), this._noMoviesComponent);
       return;
     }
 
+    const container = this._container;
+    const moviesListElement = this._moviesListComponent.getElement();
+    const moviesToShow = this._movies.slice(0, this._showingMoviesCountOnStart);
+
+    // SORT
+
+    render(container.getElement(), this._sortComponent, RenderPosition.AFTERBEGIN);
+
     // MOVIES
 
-    const moviesListElement = this._moviesListComponent.getElement().querySelector(`.films-list__container`);
+    render(container.getElement(), this._moviesListContainerComponent);
 
-    let showingMoviesCount = SHOWING_MOVIES_COUNT_ON_START;
+    render(this._moviesListContainerComponent.getElement(), this._moviesListComponent);
 
-    movies.slice(0, showingMoviesCount)
-      .forEach((movie) => {
-        renderMovie(moviesListElement, movie);
-      });
+    const newMovies = renderMovies(moviesListElement, moviesToShow, this._onDataChange, this._onViewChange);
+
+    this._showedMoviesControllers = this._showedMoviesControllers.concat(newMovies);
+
+    this._renderLoadMoreButton();
 
     // MOVIES-EXTRA
 
-    render(container.getElement(), this._moviesListExtraTopRatedComponent);
-    render(container.getElement(), this._moviesListExtraMostCommentedComponent);
+    this._renderMoviesExtraBlock(SortType.RATING, TOP_RATED_BLOCK, this._moviesListExtraTopRatedComponent);
+    this._renderMoviesExtraBlock(SortType.COMMENTS, MOST_COMMENTED_BLOCK, this._moviesListExtraMostCommentedComponent);
+  }
 
-    const moviesTopRatedBlock = container.getElement().querySelectorAll(`.films-list--extra .films-list__container`)[TOP_RATED_BLOCK];
+  _renderLoadMoreButton() {
+    const moviesListElement = this._moviesListComponent.getElement();
 
-    const moviesMostCommentedBlock = container.getElement().querySelectorAll(`.films-list--extra .films-list__container`)[MOST_COMMENTED_BLOCK];
+    if (this._showingMoviesCountOnStart >= this._movies.length) {
+      return;
+    }
 
-    const topRatedMovies = movies.slice();
+    render(this._moviesListContainerComponent.getElement(), this._loadMoreButtonComponent);
 
-    topRatedMovies.sort(sortArray(`rating`));
+    this._loadMoreButtonComponent.setClickHandler(() => {
+      const prevMoviesCount = this._showingMoviesCountOnStart;
+      this._showingMoviesCountOnStart = this._showingMoviesCountOnStart + SHOWING_MOVIES_COUNT_BY_BUTTON;
 
-    topRatedMovies.slice(0, MOVIES_COUNT_EXTRA)
-      .forEach((movie) => {
-        renderMovie(moviesTopRatedBlock, movie);
-      });
+      const moviesToShow = this._movies.slice(prevMoviesCount, this._showingMoviesCountOnStart);
 
-    const mostCommentedMovies = movies.slice();
+      const newMovies = renderMovies(moviesListElement, moviesToShow, this._onDataChange, this._onViewChange);
 
-    mostCommentedMovies.sort(sortArray(`commentsQty`));
+      this._showedMoviesControllers = this._showedMoviesControllers.concat(newMovies);
 
-    mostCommentedMovies.slice(0, MOVIES_COUNT_EXTRA)
-      .forEach((movie) => {
-        renderMovie(moviesMostCommentedBlock, movie);
-      });
-
-    // Sort
-
-    renderLoadMoreButton();
-
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
-
-      showingMoviesCount = SHOWING_MOVIES_COUNT_BY_BUTTON;
-
-      const sortedMovies = getSortedMovies(movies, sortType, 0, showingMoviesCount);
-
-      moviesListElement.innerHTML = ``;
-
-      sortedMovies.slice(0, showingMoviesCount)
-        .forEach((movie) => {
-          renderMovie(moviesListElement, movie);
-        });
-
-      renderLoadMoreButton();
+      if (this._showingMoviesCountOnStart >= this._movies.length) {
+        remove(this._loadMoreButtonComponent);
+      }
     });
+  }
+
+  _renderMoviesExtraBlock(sortType, block, component) {
+    render(this._container.getElement(), component);
+
+    const moviesExtraContainer = this._container.getElement().querySelectorAll(`.films-list--extra .films-list__container`)[block];
+
+    const extraMovies = getSortedMovies(this._movies, sortType, 0, MOVIES_COUNT_EXTRA);
+
+    const newMovies = renderMovies(moviesExtraContainer, extraMovies, this._onDataChange, this._onViewChange);
+
+    this._showedMoviesControllers = this._showedMoviesControllers.concat(newMovies);
+  }
+
+  _onDataChange(oldData, newData) {
+    const index = this._movies.findIndex((it) => it === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._movies = [].concat(this._movies.slice(0, index), newData, this._movies.slice(index + 1));
+
+    this._showedMoviesControllers[index].render(this._movies[index]);
+  }
+
+  _onViewChange() {
+    this._showedMoviesControllers.forEach((it) => it.setDefaultView());
+  }
+
+  _onSortTypeChange(sortType) {
+    const moviesListElement = this._moviesListComponent.getElement();
+
+    const sortedMovies = getSortedMovies(this._movies, sortType, 0, this._showingMoviesCountOnStart);
+
+    moviesListElement.innerHTML = ``;
+
+    const newMovies = renderMovies(moviesListElement, sortedMovies, this._onDataChange, this._onViewChange);
+
+    this._showedMoviesControllers = this._showedMoviesControllers.concat(newMovies);
+
+    this._renderLoadMoreButton();
   }
 }

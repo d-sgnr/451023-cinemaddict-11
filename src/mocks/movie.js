@@ -58,6 +58,9 @@ const generateMovie = () => {
     description: randomDescription,
     age: `${randomAge}`,
     commentsQty: randomCommentsQty,
+    isWatchlist: Math.random() > 0.5,
+    isWatched: Math.random() > 0.5,
+    isFavorite: Math.random() > 0.5,
   };
 };
 
