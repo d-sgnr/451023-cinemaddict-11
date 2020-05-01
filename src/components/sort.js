@@ -4,6 +4,7 @@ export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`,
+  COMMENTS: `commentsQty`,
 };
 
 const createSortTemplate = () => {
