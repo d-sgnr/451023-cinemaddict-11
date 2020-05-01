@@ -5,10 +5,13 @@ import {
 } from '../const.js';
 
 import {
+  getRandomDate,
   getRandomItem
 } from '../utils/common.js';
 
-const generateComment = () => {
+const commentDate = getRandomDate();
+
+export const generateComment = () => {
   const randomComment = getRandomItem(COMMENTS);
   const randomAuthor = getRandomItem(AUTHORS);
   const randomAvatar = getRandomItem(AVATARS);
@@ -16,19 +19,11 @@ const generateComment = () => {
   return {
     text: `${randomComment}`,
     author: `${randomAuthor}`,
-    date: `22`,
-    time: `22`,
+    date: commentDate,
     avatar: `./images/emoji/${randomAvatar}`,
   };
 };
 
-const generateComments = (qty) => {
+export const generateComments = (qty) => {
   return new Array(qty).fill(``).map(generateComment);
-};
-
-export {
-  generateComment
-};
-export {
-  generateComments
 };

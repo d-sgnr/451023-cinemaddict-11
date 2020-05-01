@@ -34,15 +34,6 @@ export const GENRES = [
   `Cartoon`
 ];
 
-export const YEARS = [
-  `1929`,
-  `1956`,
-  `1972`,
-  `1988`,
-  `1925`,
-  `1942`
-];
-
 export const DIRECTORS = [
   `Anthony Mann`,
   `Quentin Tarantino`,
@@ -71,15 +62,6 @@ export const COUNTRIES = [
   `United Kingdom`,
   `Spain`,
   `Italy`
-];
-
-export const DATES = [
-  `15 March 1972`,
-  `12 December 1931`,
-  `2 September 1924`,
-  `6 June 1917`,
-  `8 May 1958`,
-  `22 July 1972`
 ];
 
 export const AGE = [
@@ -115,21 +97,6 @@ export const RATINGS = [
   `novice`,
   `fan`,
   `movie buff`
-];
-
-export const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`
 ];
 
 export const FILTERS_NAMES = [
