@@ -1,9 +1,53 @@
+import moment from 'moment';
+
 import {
   ESC_KEYCODE,
   ENTER_KEYCODE,
   MIN_COMMENTS_QTY,
   MAX_COMMENTS_QTY
 } from '../const.js';
+
+export const formatDuration = (minutes) => {
+  return moment.utc(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] m[m]`);
+};
+
+export const formatDate = (date, yearOnly) => {
+  if (yearOnly === true) {
+    return moment(date).format(`YYYY`);
+  }
+  return moment(date).format(`DD MMMM YYYY`);
+};
+
+export const formatCommentDate = (date) => {
+  return moment(date).fromNow();
+};
+
+export const getRandomNumber = (min, max, decimal = false) => {
+  let number = min + Math.random() * (max + 1 - min);
+
+  if (decimal === true) {
+    number = number.toFixed(1);
+  } else {
+    number = Math.floor(number);
+  }
+
+  if (number > max) {
+    number = max;
+  }
+
+  return number;
+};
+
+export const getRandomDate = () => {
+  const targetDate = new Date();
+  const sign = Math.random() > 0.5 ? 1 : -1;
+  const diffValue = sign * getRandomNumber(0, 8);
+
+  targetDate.setDate(targetDate.getDate() + diffValue);
+  targetDate.setYear(getRandomNumber(1920, 2019));
+
+  return targetDate;
+};
 
 export const isEscKeyDown = (evt, action) => {
   return evt.keyCode === ESC_KEYCODE ? action() : ``;
@@ -21,22 +65,6 @@ export const makeWordCapitalized = (word) => {
 
 export const getRandomItem = (items) => {
   return items[Math.floor(Math.random() * items.length)];
-};
-
-export const getRandomNumber = (min, max, decimal = false) => {
-  let number = min + Math.random() * (max + 1 - min);
-
-  if (decimal === true) {
-    number = number.toFixed(1);
-  } else {
-    number = Math.floor(number);
-  }
-
-  if (number > max) {
-    number = max;
-  }
-
-  return number;
 };
 
 export const insertSpacesIntoNumber = (number) => {
