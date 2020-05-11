@@ -3,6 +3,19 @@ export const ENTER_KEYCODE = 13;
 
 export const EMOJIS = [`smile`, `sleeping`, `puke`, `angry`];
 
+export const FilterType = {
+  ALL: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`,
+};
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`
+};
+
 export const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 
 export const POSTERS = [
@@ -99,13 +112,6 @@ export const RATINGS = [
   `movie buff`
 ];
 
-export const FILTERS_NAMES = [
-  `All Movies`,
-  `Watchlist`,
-  `History`,
-  `Favorites`
-];
-
 export const MAX_DESCRIPTION_SYMBOLS = 140;
 
 export const MIN_RATING = 1;
@@ -114,8 +120,8 @@ export const MAX_RATING = 10;
 export const MIN_SENTENCES_QTY = 1;
 export const MAX_SENTENCES_QTY = 5;
 
-export const MIN_COMMENTS_QTY = 0;
-export const MAX_COMMENTS_QTY = 5;
+export const MIN_COMMENTS_QTY = 5;
+export const MAX_COMMENTS_QTY = 10;
 
 export const MIN_MOVIES_TOTAL_QTY = 120423;
 export const MAX_MOVIES_TOTAL_QTY = 245535;

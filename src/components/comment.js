@@ -1,4 +1,6 @@
-import {formatCommentDate} from '../utils/common.js';
+import {
+  formatCommentDate
+} from '../utils/common.js';
 
 import AbstractComponent from './abstract-component.js';
 
@@ -33,9 +35,26 @@ export default class Comment extends AbstractComponent {
   constructor(comment) {
     super();
     this._comment = comment;
+
+    this._deleteButtonClickHandler = null;
   }
 
   getTemplate() {
     return createCommentTemplate(this._comment);
+  }
+
+  removeElement() {
+    super.removeElement();
+  }
+
+  recoveryListeners() {
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__comment-delete`)
+      .addEventListener(`click`, handler);
+
+    this._deleteButtonClickHandler = handler;
   }
 }

@@ -41,6 +41,7 @@ const generateMovie = () => {
   const randomDate = getRandomDate();
 
   return {
+    id: Math.random(),
     title: randomTitle,
     originalTitle: randomTitle,
     rating: randomRating,

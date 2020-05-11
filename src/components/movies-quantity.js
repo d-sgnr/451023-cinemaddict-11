@@ -1,18 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-import {
-  getRandomNumber,
-  insertSpacesIntoNumber
-} from '../utils/common.js';
-
-import {
-  MIN_MOVIES_TOTAL_QTY,
-  MAX_MOVIES_TOTAL_QTY
-} from '../const.js';
-
-const createMoviesQuantityTemplate = () => {
-  const moviesQuantity = insertSpacesIntoNumber(getRandomNumber(MIN_MOVIES_TOTAL_QTY, MAX_MOVIES_TOTAL_QTY));
-
+const createMoviesQuantityTemplate = (moviesQuantity) => {
   return (
     `<section class="footer__statistics">
       <p>${moviesQuantity} movies inside</p>
@@ -21,7 +9,13 @@ const createMoviesQuantityTemplate = () => {
 };
 
 export default class MoviesQuantity extends AbstractComponent {
+  constructor(moviesModel) {
+    super();
+
+    this._moviesModel = moviesModel;
+  }
   getTemplate() {
-    return createMoviesQuantityTemplate();
+    const movies = this._moviesModel.getMoviesAll();
+    return createMoviesQuantityTemplate(movies.length);
   }
 }

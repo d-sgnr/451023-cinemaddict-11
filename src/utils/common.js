@@ -22,6 +22,10 @@ export const formatCommentDate = (date) => {
   return moment(date).fromNow();
 };
 
+export const getNowDate = () => {
+  formatCommentDate(moment());
+};
+
 export const getRandomNumber = (min, max, decimal = false) => {
   let number = min + Math.random() * (max + 1 - min);
 
@@ -51,6 +55,10 @@ export const getRandomDate = () => {
 
 export const isEscKeyDown = (evt, action) => {
   return evt.keyCode === ESC_KEYCODE ? action() : ``;
+};
+
+export const isControlEnterKeyDown = (evt, action) => {
+  return evt.keyCode === ENTER_KEYCODE && (evt.ctrlKey || evt.metaKey) ? action() : ``;
 };
 
 export const isEnterKeyDown = (evt, action) => {
