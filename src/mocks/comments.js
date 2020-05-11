@@ -17,6 +17,7 @@ export const generateComment = () => {
   const randomAvatar = getRandomItem(AVATARS);
 
   return {
+    id: Math.random(),
     text: `${randomComment}`,
     author: `${randomAuthor}`,
     date: commentDate,

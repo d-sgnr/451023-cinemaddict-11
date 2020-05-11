@@ -1,31 +1,35 @@
 import AbstractComponent from './abstract-component.js';
+import {
+  SortType
+} from '../const.js';
 
-export const SortType = {
-  DEFAULT: `default`,
-  DATE: `date`,
-  RATING: `rating`,
-  COMMENTS: `commentsQty`,
+const createSortMarkup = (sortButton, isActive) => {
+  const {
+    name
+  } = sortButton;
+  return (
+    `<li><a href="#" data-sort-type="${name}" class="sort__button${isActive ? ` sort__button--active` : ``}">Sort by ${name}</a></li>`
+  );
 };
 
-const createSortTemplate = () => {
+const createSortTemplate = (sortButtons) => {
+  const sortMarkup = sortButtons.map((it) => createSortMarkup(it, it.active)).join(``);
   return (
     `<ul class="sort">
-      <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button sort__button--active">Sort by default</a></li>
-      <li><a href="#" data-sort-type="${SortType.DATE}" class="sort__button">Sort by date</a></li>
-      <li><a href="#" data-sort-type="${SortType.RATING}" class="sort__button">Sort by rating</a></li>
+      ${sortMarkup}
     </ul>`
   );
 };
 
 export default class Sort extends AbstractComponent {
-  constructor() {
+  constructor(activeSortType) {
     super();
 
-    this._currenSortType = SortType.DEFAULT;
+    this._sort = this._generateSorting(activeSortType);
   }
 
   getTemplate() {
-    return createSortTemplate();
+    return createSortTemplate(this._sort);
   }
 
   getSortType() {
@@ -35,11 +39,9 @@ export default class Sort extends AbstractComponent {
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
-
       if (evt.target.tagName !== `A`) {
         return;
       }
-
       const sortType = evt.target.dataset.sortType;
 
       if (this._currenSortType === sortType) {
@@ -49,6 +51,15 @@ export default class Sort extends AbstractComponent {
       this._currenSortType = sortType;
 
       handler(this._currenSortType);
+    });
+  }
+
+  _generateSorting(activeSortType) {
+    return Object.values(SortType).map((sortType) => {
+      return {
+        name: sortType,
+        active: sortType === activeSortType,
+      };
     });
   }
 }
