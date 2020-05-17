@@ -121,6 +121,7 @@ export default class PageController {
 
     this._renderMoviesExtraBlock(SortType.RATING, TOP_RATED_BLOCK, new MoviesListExtraComponent(FIRST_EXTRA_LIST_TITLE));
     this._renderMoviesExtraBlock(`commentsQty`, MOST_COMMENTED_BLOCK, new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE));
+
   }
 
   _renderMovies(movies) {
@@ -234,5 +235,13 @@ export default class PageController {
     this._renderMovies(sortedMovies);
 
     this._renderLoadMoreButton();
+  }
+
+  show() {
+    this._container.show();
+  }
+
+  hide() {
+    this._container.hide();
   }
 }
