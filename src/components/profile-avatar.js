@@ -1,14 +1,16 @@
 import AbstractComponent from './abstract-component.js';
 
-const getRank = (moviesCount) => {
-  let rank = `Novice`;
+import {RatingType} from '../const.js';
+
+export const getRank = (moviesCount) => {
+  let rank = RatingType.LOW;
 
   switch (true) {
     case (moviesCount >= 11 && moviesCount <= 20):
-      rank = `Fan`;
+      rank = RatingType.MIDDLE;
       break;
     case (moviesCount >= 21):
-      rank = `Movie Buff`;
+      rank = RatingType.HIGH;
       break;
   } return rank;
 };

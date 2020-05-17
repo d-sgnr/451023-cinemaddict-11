@@ -1,6 +1,8 @@
 export const ESC_KEYCODE = 27;
 export const ENTER_KEYCODE = 13;
 
+export const HIDDEN_CLASS = `visually-hidden`;
+
 export const EMOJIS = [`smile`, `sleeping`, `puke`, `angry`];
 
 export const FilterType = {
@@ -10,10 +12,20 @@ export const FilterType = {
   FAVORITES: `Favorites`,
 };
 
+export const MenuItem = {
+  STATS: `Stats`,
+};
+
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`
+};
+
+export const RatingType = {
+  LOW: `Novice`,
+  MIDDLE: `Fan`,
+  HIGH: `Movie Buff`,
 };
 
 export const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
@@ -103,13 +115,6 @@ export const AVATARS = [
   `sleeping.png`,
   `angry.png`,
   `puke.png`
-];
-
-export const RATINGS = [
-  ` `,
-  `novice`,
-  `fan`,
-  `movie buff`
 ];
 
 export const MAX_DESCRIPTION_SYMBOLS = 140;

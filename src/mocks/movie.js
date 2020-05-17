@@ -25,13 +25,15 @@ import {
   getRandomNumber
 } from '../utils/common.js';
 
+const movieWatchingDate = getRandomDate();
+
 const generateMovie = () => {
   const randomPoster = getRandomItem(POSTERS);
   const randomDescription = getRandomText(DESCRIPTION_TEXT, MIN_SENTENCES_QTY, MAX_SENTENCES_QTY);
   const randomTitle = getRandomItem(TITLES);
   const randomGenre = getRandomItem(GENRES);
   const randomRating = getRandomNumber(MIN_RATING, MAX_RATING, true);
-  const randomDuration = formatDuration(121);
+  const randomDuration = formatDuration(168);
   const randomDirector = getRandomItem(DIRECTORS);
   const randomActors = ACTORS.join(`, `);
   const randomWriters = WRITERS.join(`, `);
@@ -61,6 +63,7 @@ const generateMovie = () => {
     isWatchlist: Math.random() > 0.5,
     isWatched: Math.random() > 0.5,
     isFavorite: Math.random() > 0.5,
+    watchingDate: movieWatchingDate,
   };
 };
 
