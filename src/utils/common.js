@@ -26,6 +26,14 @@ export const getNowDate = () => {
   formatCommentDate(moment());
 };
 
+export const formatTime = (time) => {
+  const hours = Math.floor(time / 60) + `h`;
+  const minutes = time % 60 + `m`;
+  const formattedTime = hours + ` ` + minutes;
+
+  return formattedTime;
+};
+
 export const getRandomNumber = (min, max, decimal = false) => {
   let number = min + Math.random() * (max + 1 - min);
 

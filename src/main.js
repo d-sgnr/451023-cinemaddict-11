@@ -1,3 +1,5 @@
+import API from "./api.js";
+
 import PageComponent from "./components/page.js";
 import PageController from "./controllers/page.js";
 import FilterController from "./controllers/filter.js";
@@ -6,11 +8,9 @@ import FilterComponent from './components/filter.js';
 import StatsComponent from './components/stats.js';
 import MoviesQuantityComponent from './components/movies-quantity.js';
 import MoviesModel from "./models/movies.js";
-import SiteMenuComponent, {MenuItem} from "./components/site-menu.js";
-
-import {
-  generateMovies
-} from './mocks/movie.js';
+import SiteMenuComponent, {
+  MenuItem
+} from "./components/site-menu.js";
 
 import {
   RenderPosition,
@@ -20,13 +20,16 @@ import {
   MOVIES_COUNT
 } from './const.js';
 
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
+const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
 
-const movies = generateMovies(MOVIES_COUNT);
+const api = new API(END_POINT, AUTHORIZATION);
+
 const moviesModel = new MoviesModel();
-moviesModel.setMovies(movies);
 
 const siteMenuComponent = new SiteMenuComponent();
 render(siteMainElement, siteMenuComponent);
@@ -36,21 +39,10 @@ const siteMenuElement = document.querySelector(`.main-navigation`);
 const filterController = new FilterController(siteMenuElement, moviesModel);
 filterController.render();
 
-//AVATAR
-
-render(siteHeaderElement, new ProfileAvatarComponent(moviesModel));
-
-//MOVIES QUANTITY
-
-render(siteFooterElement, new MoviesQuantityComponent(moviesModel));
-
-//RENDERING
-
 const pageComponent = new PageComponent();
-const pageController = new PageController(pageComponent, moviesModel);
+const pageController = new PageController(pageComponent, moviesModel, api);
 
 render(siteMainElement, pageComponent);
-pageController.render(movies);
 
 const dateTo = new Date();
 const dateFrom = (() => {
@@ -59,23 +51,31 @@ const dateFrom = (() => {
   return d;
 })();
 
-//STATS
+const getStatistics = () => {
+  const statsComponent = new StatsComponent(moviesModel);
+  render(siteMainElement, statsComponent);
 
-const statsComponent = new StatsComponent(moviesModel);
+  siteMenuComponent.setOnChange((activeItem) => {
+    switch (activeItem) {
+      case MenuItem.STATS:
+        // statsComponent.setMovies(moviesModel);
+        filterController.setNotActiveView();
+        pageController.hide();
+        statsComponent.show();
+        break;
+      default:
+        pageController.show();
+        statsComponent.hide();
+    }
+  });
+};
 
-render(siteMainElement, statsComponent);
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(movies);
+    pageController.render();
+    getStatistics();
 
-// MENU
-
-siteMenuComponent.setOnChange((activeItem) => {
-  switch (activeItem) {
-    case MenuItem.STATS:
-      filterController.setNotActiveView();
-      pageController.hide();
-      statsComponent.show();
-      break;
-    default:
-      pageController.show();
-      statsComponent.hide();
-  }
-});
+    render(siteHeaderElement, new ProfileAvatarComponent(moviesModel));
+    render(siteFooterElement, new MoviesQuantityComponent(moviesModel));
+  })

@@ -29,17 +29,17 @@ import {
   SECOND_EXTRA_LIST_TITLE
 } from '../const.js';
 
-import {
-  generateComments
-} from '../mocks/comments.js';
+import API from "../api.js";
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
+const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
 
-const comments = generateComments(5);
+const api = new API(END_POINT, AUTHORIZATION);
+
 const commentsModel = new CommentsModel();
-commentsModel.setComments(comments);
 
 const renderMovies = (moviesListElement, movies, onDataChange, onViewChange) => {
   return movies.map((movie) => {
-    const movieController = new MovieController(moviesListElement, onDataChange, onViewChange, commentsModel);
+    const movieController = new MovieController(moviesListElement, onDataChange, onViewChange, commentsModel, api);
     movieController.render(movie);
     return movieController;
   });
@@ -68,9 +68,10 @@ const getSortedMovies = (movies, sortType, from, to) => {
 };
 
 export default class PageController {
-  constructor(container, moviesModel) {
+  constructor(container, moviesModel, apiItem) {
     this._container = container;
     this._moviesModel = moviesModel;
+    this._api = apiItem;
 
     this._movies = [];
     this._showedMovieControllers = [];
@@ -196,11 +197,17 @@ export default class PageController {
   }
 
   _onDataChange(controller, oldData, newData) {
-    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
 
-    if (isSuccess) {
-      controller.render(newData);
-    }
+    this._api.updateMovie(oldData.id, newData)
+      .then((movieModel) => {
+
+        const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
+
+        if (isSuccess) {
+          controller.render(movieModel);
+          this._updateMovies(this._showingMoviesCount);
+        }
+      });
   }
 
   _updateMovies(count) {

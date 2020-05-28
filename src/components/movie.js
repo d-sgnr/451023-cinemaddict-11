@@ -1,7 +1,9 @@
 import AbstractComponent from './abstract-component.js';
 
 import {
-  maybePluralize
+  maybePluralize,
+  formatDate,
+  formatTime
 } from '../utils/common.js';
 
 import {
@@ -36,17 +38,26 @@ const createMovieTemplate = (movie) => {
     genre,
     poster,
     description,
-    commentsQty,
+    comments,
     isWatchlist,
     isWatched,
-    isFavorite
+    isFavorite,
   } = movie;
+
+  const commentsCount = comments.length;
+
+  const movieGenre = genre[0];
+
+  const movieYear = formatDate(year, true);
+  const movieDuration = formatTime(duration);
 
   const watchlistButton = createButtonMarkup(`watchlist`, isWatchlist);
   const watchedButton = createButtonMarkup(`watched`, isWatched);
   const favoriteButton = createButtonMarkup(`favorite`, isFavorite);
 
   const getMovieDescription = (descr) => {
+
+
     let visibleText = descr.slice(0, MAX_DESCRIPTION_SYMBOLS);
 
     if (descr.length > MAX_DESCRIPTION_SYMBOLS) {
@@ -58,7 +69,7 @@ const createMovieTemplate = (movie) => {
     return visibleText;
   };
 
-  const commentsWord = maybePluralize(`comment`, commentsQty);
+  const commentsWord = maybePluralize(`comment`, comments);
 
   const cardMovieDescription = getMovieDescription(description);
 
@@ -67,13 +78,13 @@ const createMovieTemplate = (movie) => {
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${year}</span>
-        <span class="film-card__duration">${duration}</span>
-        <span class="film-card__genre">${genre}</span>
+        <span class="film-card__year">${movieYear}</span>
+        <span class="film-card__duration">${movieDuration}</span>
+        <span class="film-card__genre">${movieGenre}</span>
       </p>
-      <img src="./images/posters/${poster}" alt="" class="film-card__poster">
+      <img src="./${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${cardMovieDescription}</p>
-      <a class="film-card__comments">${commentsQty} ${commentsWord}</a>
+      <a class="film-card__comments">${commentsCount} ${commentsWord}</a>
       <form class="film-card__controls">
         ${watchlistButton}
         ${watchedButton}

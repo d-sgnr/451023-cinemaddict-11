@@ -1,37 +1,21 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
+import CommentModel from "../models/comment.js";
+
 import {
   EMOJIS
 } from '../const.js';
 
 import {
-  AUTHORS
-} from '../const.js';
-
-import {
-  getRandomItem
-} from '../utils/common.js';
-
-const randomAuthor = getRandomItem(AUTHORS);
-
-import {
-  getNowDate
-} from '../utils/common.js';
-
-import {
   encode
 } from "he";
 
-const commentDate = getNowDate();
-
 const parseFormData = (formData, avatar) => {
-  return {
-    id: Math.random(),
-    text: formData.get(`comment`),
-    author: randomAuthor,
-    date: commentDate,
-    avatar: `./images/emoji/${avatar}.png`,
-  };
+  return new CommentModel({
+    "date": new Date(),
+    "emotion": `${avatar}`,
+    "comment": formData.get(`comment`),
+  });
 };
 
 
