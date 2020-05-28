@@ -1,5 +1,10 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
+import {
+  formatDate,
+  formatTime
+} from '../utils/common.js';
+
 const createButtonMarkup = (name, isActive = false) => {
   const buttonLabel =
     (name === `watchlist` ? `Add to ` : `Mark as `) + name;
@@ -10,20 +15,9 @@ const createButtonMarkup = (name, isActive = false) => {
   );
 };
 
-const createGenresMarkup = (genre, genres) => {
-
-  const movieGenre = genre;
-  const movieGenres = genres;
-
-  const movieGenresArray = movieGenres.split(` `);
-
-  if (movieGenre === movieGenres) {
-    return (
-      `<span class="film-details__genre">${genre}</span>`
-    );
-  }
+const createGenresMarkup = (genres) => {
   return (
-    movieGenresArray.map((it) => `<span class="film-details__genre">${it}</span>`).join(`\n`)
+    genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(`\n`)
   );
 };
 
@@ -40,7 +34,6 @@ const createMoviePopupTemplate = (movie) => {
     duration,
     country,
     genre,
-    genres,
     poster,
     description,
     age,
@@ -49,11 +42,14 @@ const createMoviePopupTemplate = (movie) => {
     isFavorite
   } = movie;
 
+  const movieDuration = formatTime(duration);
+  const movieDate = formatDate(date);
+
   const watchlistButton = createButtonMarkup(`watchlist`, isWatchlist);
   const watchedButton = createButtonMarkup(`watched`, isWatched);
   const favoritesButton = createButtonMarkup(`favorite`, isFavorite);
 
-  const genresMarkup = createGenresMarkup(genre, genres);
+  const genresMarkup = createGenresMarkup(genre);
 
   return (
     `<div class="form-details__top-container">
@@ -62,8 +58,8 @@ const createMoviePopupTemplate = (movie) => {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
-          <p class="film-details__age">${age}</p>
+          <img class="film-details__poster-img" src="${poster}" alt="">
+          <p class="film-details__age">${age}+</p>
         </div>
         <div class="film-details__info">
           <div class="film-details__info-head">
@@ -90,11 +86,11 @@ const createMoviePopupTemplate = (movie) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${date}</td>
+              <td class="film-details__cell">${movieDate}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${duration}</td>
+              <td class="film-details__cell">${movieDuration}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -140,7 +136,7 @@ export default class MoviePopup extends AbstractSmartComponent {
     this.setWatchlistButtonClickHandler(this._watchlistHandler);
     this.setWatchedButtonClickHandler(this._watchedHandler);
     this.setFavoritesButtonClickHandler(this._favoritesHandler);
-    this.setPopupCloseClickHandler(this._favoritesHandler);
+    this.setPopupCloseClickHandler(this._popupCloseHandler);
   }
 
   rerender() {

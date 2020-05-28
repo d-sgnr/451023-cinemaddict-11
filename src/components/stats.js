@@ -49,22 +49,39 @@ const getGenresCount = (genres, genreName) => {
 };
 
 const getMoviesByPeriod = (movies, period) => {
-
   if (period === `all-time`) {
     return movies;
   } else {
-    return movies.filter((movie) => {
+    let moviesByPeriod = movies.filter((movie) => {
       const watchingDate = movie.watchingDate;
-      moment(watchingDate).isSame(new Date(), period);
+      return moment(watchingDate).isSame(new Date(), period);
     });
+    return moviesByPeriod;
   }
+};
+
+const getObjectWithMaxValue = (array, key) => {
+  let maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
+
+  const index = array.indexOf(maxValueObject);
+
+  const newArray = array.slice();
+
+  newArray.splice(index, 1);
+
+  const hasDuplicates = newArray.some((e) => e[key] === maxValueObject[key]);
+
+  if (hasDuplicates) {
+    return ``;
+  }
+  return maxValueObject;
 };
 
 const getAllGenres = (movies) => {
   let genresArray = [];
 
   movies.map((movie) => {
-    genresArray.push(movie.genre);
+    genresArray.push(...movie.genre);
   });
 
   const uniqueGenres = [...new Set(genresArray)];
@@ -89,11 +106,14 @@ const makeArrayOfValues = (array, key) => {
   return newArray;
 };
 
-const renderGenresChart = (statisticCtx, movies) => {
+const renderGenresChart = (statisticCtx, movies, period) => {
 
-  const allGenres = getAllGenres(movies);
+  const moviesToShow = getMoviesByPeriod(movies, period);
+
+  const allGenres = getAllGenres(moviesToShow);
 
   const genres = makeArrayOfValues(allGenres, `genre`);
+
   const genresCounts = makeArrayOfValues(allGenres, `count`);
 
   return new Chart(statisticCtx, {
@@ -159,57 +179,48 @@ const createStatisticsTemplate = ({
   period
 }) => {
 
-  const allGenres = getAllGenres(movies);
+  const filteredMovies = getMoviesByPeriod(movies, period);
 
-  const getObjectWithMaxValue = (array, key) => {
-    let maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
+  const allGenres = getAllGenres(filteredMovies);
 
-    let arrayOfMaxValues = [];
+  const getTotalTime = (moviesToCount, minutes = false) => {
 
-    array.map((it) => {
-      if (it[key] === maxValueObject[key]) {
-        arrayOfMaxValues.push(it);
-      }
+    let totalTime = 0;
+
+    moviesToCount.map((movie) => {
+      totalTime += movie.duration;
     });
 
-    if (arrayOfMaxValues.length === 1) {
-      return maxValueObject;
+    const totalHours = Math.floor(totalTime / 60);
+    const totalMinutes = totalTime % 60;
+
+    if (minutes) {
+      return totalMinutes;
     }
-    return false;
+    return totalHours;
   };
 
-  // const getTotalTime = (moviesToCount) => {
-  //   let hoursArray = [];
-  //   let minutesArray = [];
-  //
-  //   moviesToCount.map((movie) => {
-  //     hoursArray.push(movie.duration.split(`h`)[0]);
-  //     minutesArray.push(movie.duration.split(`m`)[0].split(`h`)[1]);
-  //   });
-  //
-  //   let totalHours = 0;
-  //
-  //   hoursArray.forEach((item) => {
-  //     totalHours += item;
-  //   });
-  //
-  //   return totalHours;
-  // };
+  const hours = getTotalTime(filteredMovies);
+  const minutes = getTotalTime(filteredMovies, true);
 
-  // const totalTime = getTotalTime(movies);
+  const moviesCount = filteredMovies.length;
 
-  const moviesCount = getMoviesByPeriod(movies, period).length;
+  const isTopGenre = (genres) => {
 
-  const isTopGenre = () => {
-    const topGenre = getObjectWithMaxValue(allGenres, `count`);
+    if (genres.length > 0) {
+      const topGenre = getObjectWithMaxValue(genres, `count`);
 
-    if (topGenre) {
-      return topGenre[`genre`];
+      if (topGenre) {
+        return topGenre[`genre`];
+      }
+
+      return `-`;
     }
-    return ``;
+
+    return `-`;
   };
 
-  const topGenre = isTopGenre();
+  const topGenre = isTopGenre(allGenres);
 
   // const watchedMovies = movies.filter((movie) => movie.isWatched === true);
 
@@ -237,7 +248,7 @@ const createStatisticsTemplate = ({
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
@@ -287,7 +298,9 @@ export default class Stats extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    this._statsChart = renderGenresChart(statisticCtx, this._movies.getMovies());
+    const watchedMovies = this._movies.getMovies().filter((movie) => movie.isWatched === true);
+
+    this._statsChart = renderGenresChart(statisticCtx, watchedMovies, this._period);
   }
 
   _resetCharts() {
@@ -308,6 +321,11 @@ export default class Stats extends AbstractSmartComponent {
     this._renderCharts();
   }
 
+  setMovies(movies) {
+    this._movies = Array.from(movies);
+    // this._callHandlers(this._dataChangeHandlers);
+  }
+
   setFilterChangeHandler() {
     const periodButtons = this.getElement().querySelectorAll(`.statistic__filters-label`);
 
@@ -324,7 +342,12 @@ export default class Stats extends AbstractSmartComponent {
   }
 
   show() {
-    document.querySelector(`.statistic`).classList.remove(HIDDEN_CLASS);
+    super.show();
+
+    // this.rerender(this._movies, this._period);
+    // document.querySelector(`.statistic`).classList.remove(HIDDEN_CLASS);
+    //
+    // this.rerender(this._movies);
   }
 
   hide() {
