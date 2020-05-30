@@ -1,18 +1,22 @@
 import AbstractComponent from './abstract-component.js';
 
-import {RatingType} from '../const.js';
+import {
+  RatingType,
+  RatingMoviesCount
+} from '../const.js';
 
 export const getRank = (moviesCount) => {
   let rank = RatingType.LOW;
 
   switch (true) {
-    case (moviesCount >= 11 && moviesCount <= 20):
+    case (moviesCount >= RatingMoviesCount.LOW && moviesCount <= RatingMoviesCount.MIDDLE):
       rank = RatingType.MIDDLE;
       break;
-    case (moviesCount >= 21):
+    case (moviesCount >= RatingMoviesCount.HIGH):
       rank = RatingType.HIGH;
       break;
-  } return rank;
+  }
+  return rank;
 };
 
 const createAvatarTemplate = (moviesCount) => {
@@ -40,6 +44,7 @@ export default class ProfileAvatar extends AbstractComponent {
 
     if (watchedMovies.length > 0) {
       return createAvatarTemplate(watchedMovies.length);
-    } return ``;
+    }
+    return ``;
   }
 }

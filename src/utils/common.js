@@ -2,9 +2,7 @@ import moment from 'moment';
 
 import {
   ESC_KEYCODE,
-  ENTER_KEYCODE,
-  MIN_COMMENTS_QTY,
-  MAX_COMMENTS_QTY
+  ENTER_KEYCODE
 } from '../const.js';
 
 export const formatDuration = (minutes) => {
@@ -34,33 +32,6 @@ export const formatTime = (time) => {
   return formattedTime;
 };
 
-export const getRandomNumber = (min, max, decimal = false) => {
-  let number = min + Math.random() * (max + 1 - min);
-
-  if (decimal === true) {
-    number = number.toFixed(1);
-  } else {
-    number = Math.floor(number);
-  }
-
-  if (number > max) {
-    number = max;
-  }
-
-  return number;
-};
-
-export const getRandomDate = () => {
-  const targetDate = new Date();
-  const sign = Math.random() > 0.5 ? 1 : -1;
-  const diffValue = sign * getRandomNumber(0, 8);
-
-  targetDate.setDate(targetDate.getDate() + diffValue);
-  targetDate.setYear(getRandomNumber(1920, 2019));
-
-  return targetDate;
-};
-
 export const isEscKeyDown = (evt, action) => {
   return evt.keyCode === ESC_KEYCODE ? action() : ``;
 };
@@ -79,10 +50,6 @@ export const makeWordCapitalized = (word) => {
   return word;
 };
 
-export const getRandomItem = (items) => {
-  return items[Math.floor(Math.random() * items.length)];
-};
-
 export const insertSpacesIntoNumber = (number) => {
   const gapSize = 3;
   let formattedNumber = ``;
@@ -94,34 +61,36 @@ export const insertSpacesIntoNumber = (number) => {
   return formattedNumber;
 };
 
-export const getRandomText = (text, min, max) => {
-  const sentences = text.split(`.`).filter(Boolean);
-
-  const qty = getRandomNumber(min, max);
-  if (qty > sentences.length) {
-    qty = sentences.length;
-  }
-
-  const array = [];
-
-  for (let i = 0; i < qty; i++) {
-    array.push(getRandomItem(sentences));
-  }
-
-  return array.join(`. `) + `.`;
-};
-
-export const randomCommentsQty = () => {
-  const commentsQty = getRandomNumber(MIN_COMMENTS_QTY, MAX_COMMENTS_QTY);
-  if (commentsQty === 1) {
-    return `${commentsQty} comment`;
-  }
-  return `${commentsQty} comments`;
-};
-
 export const maybePluralize = (noun, number, suffix = `s`) => {
   const resultWord = `${noun}${number !== 1 ? suffix : ``}`;
   return resultWord;
+};
+
+export const makeArrayOfValues = (array, key) => {
+  let newItems = [];
+
+  array.forEach((arrayItem) => {
+    newItems.push(arrayItem[key]);
+  });
+
+  return newItems;
+};
+
+export const getObjectWithMaxValue = (array, key) => {
+  let maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
+
+  const index = array.indexOf(maxValueObject);
+
+  const newItems = array.slice();
+
+  newItems.splice(index, 1);
+
+  const hasDuplicates = newItems.some((e) => e[key] === maxValueObject[key]);
+
+  if (hasDuplicates) {
+    return ``;
+  }
+  return maxValueObject;
 };
 
 export const sortArray = (property, asc = false) => {
@@ -131,7 +100,7 @@ export const sortArray = (property, asc = false) => {
     sortOrder = -1;
   }
 
-  return function (a, b) {
+  return (a, b) => {
     let result = 0;
 
     if (a[property] < b[property]) {

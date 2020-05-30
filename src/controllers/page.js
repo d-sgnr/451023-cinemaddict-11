@@ -18,8 +18,12 @@ import {
   RenderPosition
 } from '../utils/render.js';
 
+import API from '../api.js';
+
 import {
   SortType,
+  AUTHORIZATION,
+  END_POINT,
   SHOWING_MOVIES_COUNT_ON_START,
   SHOWING_MOVIES_COUNT_BY_BUTTON,
   MOVIES_COUNT_EXTRA,
@@ -29,9 +33,7 @@ import {
   SECOND_EXTRA_LIST_TITLE
 } from '../const.js';
 
-import API from "../api.js";
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
-const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+const COMMENTS_COUNT_KEY = `commentsCount`;
 
 const api = new API(END_POINT, AUTHORIZATION);
 
@@ -56,8 +58,8 @@ const getSortedMovies = (movies, sortType, from, to) => {
     case SortType.RATING:
       sortedMovies = showingMovies.sort(sortArray(`rating`));
       break;
-    case `commentsQty`:
-      sortedMovies = showingMovies.sort(sortArray(`commentsQty`));
+    case COMMENTS_COUNT_KEY:
+      sortedMovies = showingMovies.sort(sortArray(COMMENTS_COUNT_KEY));
       break;
     case SortType.DEFAULT:
       sortedMovies = showingMovies;
@@ -108,8 +110,6 @@ export default class PageController {
 
     this._renderSorting();
 
-    // MOVIES
-
     render(container, this._moviesListContainerComponent);
 
     render(this._moviesListContainerComponent.getElement(), this._moviesListComponent);
@@ -118,10 +118,8 @@ export default class PageController {
 
     this._renderLoadMoreButton();
 
-    // MOVIES-EXTRA
-
     this._renderMoviesExtraBlock(SortType.RATING, TOP_RATED_BLOCK, new MoviesListExtraComponent(FIRST_EXTRA_LIST_TITLE));
-    this._renderMoviesExtraBlock(`commentsQty`, MOST_COMMENTED_BLOCK, new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE));
+    this._renderMoviesExtraBlock(COMMENTS_COUNT_KEY, MOST_COMMENTED_BLOCK, new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE));
 
   }
 
@@ -136,12 +134,12 @@ export default class PageController {
     this._showingMoviesCount = this._showedMovieControllers.length;
   }
 
-  _renderSorting() {
+  _renderSorting(sortType = SortType.DEFAULT) {
     if (this._sortComponent) {
       remove(this._sortComponent);
     }
     const container = this._container.getElement();
-    this._sortComponent = new SortComponent(this._activeSortType);
+    this._sortComponent = new SortComponent(sortType);
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
@@ -224,6 +222,7 @@ export default class PageController {
 
   _onFilterChange() {
     this._updateMovies(SHOWING_MOVIES_COUNT_ON_START);
+    this._renderSorting();
   }
 
   _onSortTypeChange(sortType) {
@@ -234,7 +233,7 @@ export default class PageController {
 
     this._activeSortType = sortType;
 
-    this._renderSorting();
+    this._renderSorting(sortType);
 
     const sortedMovies = getSortedMovies(movies, sortType, 0, this._showingMoviesCount);
 
