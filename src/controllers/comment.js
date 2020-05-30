@@ -6,25 +6,17 @@ import {
 } from '../utils/render.js';
 
 import {
-  formatCommentDate
-} from '../utils/common.js';
+  DELETING_BUTTON_TEXT,
+  SHAKE_ANIMATION_TIMEOUT
+} from '../const.js';
 
-const commentDate = formatCommentDate(new Date());
-
-export const EmptyComment = {
-  id: Math.random(),
-  text: ``,
-  author: `Michael`,
-  date: commentDate,
-  avatar: `./images/emoji/smile.png`,
-};
+export const EmptyComment = {};
 
 export default class CommentController {
-  constructor(container, onCommentsChange) {
+  constructor(container, onCommentsChange, movie) {
+    this._movie = movie;
     this._container = container;
     this._onCommentsChange = onCommentsChange;
-    // this._onViewChange = onViewChange;
-
     this._commentComponent = null;
   }
 
@@ -34,8 +26,23 @@ export default class CommentController {
 
     this._commentComponent.setDeleteButtonClickHandler((evt) => {
       evt.preventDefault();
-      this._onCommentsChange(this, comment, null);
+      this._commentComponent.setData({
+        deleteButtonText: DELETING_BUTTON_TEXT,
+      });
+      this._onCommentsChange(this, comment, null, this._movie);
     });
+  }
+
+  shake() {
+    this._commentComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._commentComponent.getElement().style.animation = ``;
+
+      this._commentComponent.setData({
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   destroy() {

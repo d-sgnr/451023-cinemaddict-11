@@ -1,5 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 
+// В случае добавления пунктов меню, просто добавить их в MenuItem, они отрендерятся автоматически
+
 export const MenuItem = {
   STATS: `Stats`,
 };
@@ -25,13 +27,10 @@ const createSiteMenuTemplate = (menuItems) => {
   );
 };
 
-
 export default class SiteMenu extends AbstractComponent {
   constructor() {
     super();
 
-    // this._activeMenuItem = null;
-    // this._activeItemHandler = null;
     this._menuItems = this._generateMenu(this._activeMenuItem);
   }
 

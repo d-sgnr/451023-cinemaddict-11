@@ -3,7 +3,8 @@ import AbstractSmartComponent from "./abstract-smart-component.js";
 import CommentModel from "../models/comment.js";
 
 import {
-  EMOJIS
+  EMOJIS,
+  SHAKE_ANIMATION_TIMEOUT
 } from '../const.js';
 
 import {
@@ -17,7 +18,6 @@ const parseFormData = (formData, avatar) => {
     "comment": formData.get(`comment`),
   });
 };
-
 
 const createCommentsFormTemplate = (options = {}) => {
 
@@ -88,6 +88,7 @@ export default class CommentsForm extends AbstractSmartComponent {
     super();
     this._selectedEmoji = null;
     this._commentText = null;
+    this._isBlockForm = false;
 
     this.setSelectedEmoji();
     this.getCommentText();
@@ -96,7 +97,7 @@ export default class CommentsForm extends AbstractSmartComponent {
   getTemplate() {
     return createCommentsFormTemplate({
       selectedEmoji: this._selectedEmoji,
-      commentText: this._commentText,
+      commentText: this._commentText
     });
   }
 
@@ -112,6 +113,8 @@ export default class CommentsForm extends AbstractSmartComponent {
   reset() {
     this._selectedEmoji = ``;
     this._commentText = ``;
+    this._isBlockForm = false;
+    this.getElement().querySelector(`textarea`).style.border = `solid 1px #979797`;
 
     this.rerender();
   }
@@ -150,10 +153,25 @@ export default class CommentsForm extends AbstractSmartComponent {
     return parseFormData(formData, this._selectedEmoji);
   }
 
+  shake() {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    this.getElement().querySelector(`textarea`).style.border = `2px solid red`;
+  }
+
+  setDefaultView() {
+    this.rerender();
+  }
+
   isReadyToSubmit() {
-    if (!!this._selectedEmoji && !!this._commentText) {
+    if (!!this._selectedEmoji && !!this._commentText && !this._isBlockForm) {
       return false;
     }
     return true;
+  }
+
+  blockForm(isBlocked) {
+    this._isBlockForm = isBlocked;
+    this.rerender();
   }
 }

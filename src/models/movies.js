@@ -14,6 +14,10 @@ export default class Movies {
     this._filterChangeHandlers = [];
   }
 
+  getModel() {
+    return this;
+  }
+
   getMovies() {
     return getMoviesByFilter(this._movies, this._activeFilterType);
   }

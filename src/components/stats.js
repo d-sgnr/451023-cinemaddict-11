@@ -9,15 +9,13 @@ import {
 import moment from 'moment';
 
 import {
-  HIDDEN_CLASS
-} from '../const.js';
-
-import {
   sortArray,
-  makeWordCapitalized
+  makeWordCapitalized,
+  getObjectWithMaxValue,
+  makeArrayOfValues
 } from '../utils/common.js';
 
-const tabsStats = {
+const TabsStats = {
   ALL: `all-time`,
   TODAY: `today`,
   WEEK: `week`,
@@ -25,24 +23,7 @@ const tabsStats = {
   YEAR: `year`,
 };
 
-const TABS_STATS = Object.values(tabsStats);
-
-const createTabsMarkup = (tabs, currentTab) => {
-  return tabs
-    .map((tab) => {
-
-      let tabName = makeWordCapitalized(tab);
-
-      if (tabName === `All-time`) {
-        tabName = `All time`;
-      }
-
-      return (
-        `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${tab}" value="${tab}" ${currentTab === tab ? `checked` : ``}>
-        <label for="statistic-${tab}" class="statistic__filters-label">${tabName}</label>`
-      );
-    }).join(`\n`);
-};
+const TABS_STATS = Object.values(TabsStats);
 
 const getGenresCount = (genres, genreName) => {
   return genres.reduce((total, x) => (x === genreName ? total + 1 : total), 0);
@@ -60,50 +41,72 @@ const getMoviesByPeriod = (movies, period) => {
   }
 };
 
-const getObjectWithMaxValue = (array, key) => {
-  let maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
-
-  const index = array.indexOf(maxValueObject);
-
-  const newArray = array.slice();
-
-  newArray.splice(index, 1);
-
-  const hasDuplicates = newArray.some((e) => e[key] === maxValueObject[key]);
-
-  if (hasDuplicates) {
-    return ``;
-  }
-  return maxValueObject;
-};
-
 const getAllGenres = (movies) => {
-  let genresArray = [];
+  let genresItems = [];
 
   movies.map((movie) => {
-    genresArray.push(...movie.genre);
+    genresItems.push(...movie.genre);
   });
 
-  const uniqueGenres = [...new Set(genresArray)];
+  const uniqueGenres = [...new Set(genresItems)];
 
   const genresObjects = uniqueGenres.map((genre) => {
     return {
       genre,
-      count: getGenresCount(genresArray, genre),
+      count: getGenresCount(genresItems, genre),
     };
   });
 
   return genresObjects.sort(sortArray(`count`));
 };
 
-const makeArrayOfValues = (array, key) => {
-  let newArray = [];
+const getTotalTime = (moviesToCount, minutes = false) => {
 
-  array.forEach((arrayItem) => {
-    newArray.push(arrayItem[key]);
+  let totalTime = 0;
+
+  moviesToCount.map((movie) => {
+    totalTime += movie.duration;
   });
 
-  return newArray;
+  const totalHours = Math.floor(totalTime / 60);
+  const totalMinutes = totalTime % 60;
+
+  if (minutes) {
+    return totalMinutes;
+  }
+  return totalHours;
+};
+
+const isTopGenre = (genres) => {
+
+  if (genres.length > 0) {
+    const topGenre = getObjectWithMaxValue(genres, `count`);
+
+    if (topGenre) {
+      return topGenre[`genre`];
+    }
+
+    return `-`;
+  }
+
+  return `-`;
+};
+
+const createTabsMarkup = (tabs, currentTab) => {
+  return tabs
+    .map((tab) => {
+
+      let tabName = makeWordCapitalized(tab);
+
+      if (tabName === `All-time`) {
+        tabName = `All time`;
+      }
+
+      return (
+        `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${tab}" value="${tab}" ${currentTab === tab ? `checked` : ``}>
+        <label for="statistic-${tab}" class="statistic__filters-label">${tabName}</label>`
+      );
+    }).join(`\n`);
 };
 
 const renderGenresChart = (statisticCtx, movies, period) => {
@@ -183,53 +186,19 @@ const createStatisticsTemplate = ({
 
   const allGenres = getAllGenres(filteredMovies);
 
-  const getTotalTime = (moviesToCount, minutes = false) => {
-
-    let totalTime = 0;
-
-    moviesToCount.map((movie) => {
-      totalTime += movie.duration;
-    });
-
-    const totalHours = Math.floor(totalTime / 60);
-    const totalMinutes = totalTime % 60;
-
-    if (minutes) {
-      return totalMinutes;
-    }
-    return totalHours;
-  };
-
   const hours = getTotalTime(filteredMovies);
   const minutes = getTotalTime(filteredMovies, true);
 
   const moviesCount = filteredMovies.length;
 
-  const isTopGenre = (genres) => {
-
-    if (genres.length > 0) {
-      const topGenre = getObjectWithMaxValue(genres, `count`);
-
-      if (topGenre) {
-        return topGenre[`genre`];
-      }
-
-      return `-`;
-    }
-
-    return `-`;
-  };
-
   const topGenre = isTopGenre(allGenres);
-
-  // const watchedMovies = movies.filter((movie) => movie.isWatched === true);
 
   const userRank = getRank(movies.length);
 
   const tabsMarkup = createTabsMarkup(TABS_STATS, period);
 
   return (
-    `<section class="statistic visually-hidden">
+    `<section class="statistic">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -279,7 +248,7 @@ export default class Stats extends AbstractSmartComponent {
 
   getTemplate() {
 
-    const watchedMovies = this._movies.getMovies().filter((movie) => movie.isWatched === true);
+    const watchedMovies = this._movies.getMoviesAll().filter((movie) => movie.isWatched === true);
 
     return createStatisticsTemplate({
       movies: watchedMovies,
@@ -298,7 +267,7 @@ export default class Stats extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    const watchedMovies = this._movies.getMovies().filter((movie) => movie.isWatched === true);
+    const watchedMovies = this._movies.getMoviesAll().filter((movie) => movie.isWatched === true);
 
     this._statsChart = renderGenresChart(statisticCtx, watchedMovies, this._period);
   }
@@ -316,19 +285,15 @@ export default class Stats extends AbstractSmartComponent {
 
     super.rerender();
 
-    this.show();
-
     this._renderCharts();
   }
 
   setMovies(movies) {
-    this._movies = Array.from(movies);
-    // this._callHandlers(this._dataChangeHandlers);
+    this._movies = movies;
   }
 
   setFilterChangeHandler() {
     const periodButtons = this.getElement().querySelectorAll(`.statistic__filters-label`);
-
     periodButtons.forEach((button) => {
       button.addEventListener(`click`, (evt) => {
 
@@ -343,14 +308,6 @@ export default class Stats extends AbstractSmartComponent {
 
   show() {
     super.show();
-
-    // this.rerender(this._movies, this._period);
-    // document.querySelector(`.statistic`).classList.remove(HIDDEN_CLASS);
-    //
-    // this.rerender(this._movies);
-  }
-
-  hide() {
-    document.querySelector(`.statistic`).classList.add(HIDDEN_CLASS);
+    this.rerender(this._movies, this._period);
   }
 }

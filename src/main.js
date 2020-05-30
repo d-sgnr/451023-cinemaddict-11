@@ -1,5 +1,3 @@
-import API from "./api.js";
-
 import PageComponent from "./components/page.js";
 import PageController from "./controllers/page.js";
 import FilterController from "./controllers/filter.js";
@@ -8,6 +6,7 @@ import FilterComponent from './components/filter.js';
 import StatsComponent from './components/stats.js';
 import MoviesQuantityComponent from './components/movies-quantity.js';
 import MoviesModel from "./models/movies.js";
+
 import SiteMenuComponent, {
   MenuItem
 } from "./components/site-menu.js";
@@ -16,12 +15,14 @@ import {
   RenderPosition,
   render
 } from './utils/render.js';
-import {
-  MOVIES_COUNT
-} from './const.js';
 
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
-const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+import API from "./api.js";
+
+import {
+  MOVIES_COUNT,
+  AUTHORIZATION,
+  END_POINT,
+} from './const.js';
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
@@ -54,11 +55,12 @@ const dateFrom = (() => {
 const getStatistics = () => {
   const statsComponent = new StatsComponent(moviesModel);
   render(siteMainElement, statsComponent);
+  statsComponent.hide();
 
   siteMenuComponent.setOnChange((activeItem) => {
     switch (activeItem) {
       case MenuItem.STATS:
-        // statsComponent.setMovies(moviesModel);
+        statsComponent.setMovies(moviesModel.getModel());
         filterController.setNotActiveView();
         pageController.hide();
         statsComponent.show();
