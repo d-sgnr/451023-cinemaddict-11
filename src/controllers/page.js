@@ -33,7 +33,7 @@ import {
   SECOND_EXTRA_LIST_TITLE
 } from '../const.js';
 
-const COMMENTS_COUNT_KEY = `commentsCount`;
+const COMMENTS_KEY = `comments`;
 
 const api = new API(END_POINT, AUTHORIZATION);
 
@@ -58,8 +58,8 @@ const getSortedMovies = (movies, sortType, from, to) => {
     case SortType.RATING:
       sortedMovies = showingMovies.sort(sortArray(`rating`));
       break;
-    case COMMENTS_COUNT_KEY:
-      sortedMovies = showingMovies.sort(sortArray(COMMENTS_COUNT_KEY));
+    case COMMENTS_KEY:
+      sortedMovies = showingMovies.sort(sortArray(COMMENTS_KEY, false, true));
       break;
     case SortType.DEFAULT:
       sortedMovies = showingMovies;
@@ -83,7 +83,9 @@ export default class PageController {
     this._sortComponent = null;
     this._moviesListComponent = new MoviesListComponent();
     this._moviesListContainerComponent = new MoviesListContainerComponent();
-    this._moviesListExtraComponent = null;
+
+    this._moviesListTopRated = new MoviesListExtraComponent(FIRST_EXTRA_LIST_TITLE);
+    this._moviesListMostCommented = new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE);
 
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
 
@@ -118,9 +120,8 @@ export default class PageController {
 
     this._renderLoadMoreButton();
 
-    this._renderMoviesExtraBlock(SortType.RATING, TOP_RATED_BLOCK, new MoviesListExtraComponent(FIRST_EXTRA_LIST_TITLE));
-    this._renderMoviesExtraBlock(COMMENTS_COUNT_KEY, MOST_COMMENTED_BLOCK, new MoviesListExtraComponent(SECOND_EXTRA_LIST_TITLE));
-
+    this._renderMoviesExtraBlock(SortType.RATING, TOP_RATED_BLOCK, this._moviesListTopRated);
+    this._renderMoviesExtraBlock(COMMENTS_KEY, MOST_COMMENTED_BLOCK, this._moviesListMostCommented);
   }
 
   _renderMovies(movies) {
@@ -194,7 +195,12 @@ export default class PageController {
     renderMovies(moviesExtraContainer, extraMovies, this._onDataChange, this._onViewChange);
   }
 
-  _onDataChange(controller, oldData, newData) {
+  _rerenderMostCommentedBlock() {
+    remove(this._moviesListMostCommented);
+    this._renderMoviesExtraBlock(COMMENTS_KEY, MOST_COMMENTED_BLOCK, this._moviesListMostCommented);
+  }
+
+  _onDataChange(controller, oldData, newData, isComment) {
 
     this._api.updateMovie(oldData.id, newData)
       .then((movieModel) => {
@@ -206,6 +212,10 @@ export default class PageController {
           this._updateMovies(this._showingMoviesCount);
         }
       });
+
+    if (isComment) {
+      this._rerenderMostCommentedBlock();
+    }
   }
 
   _updateMovies(count) {
