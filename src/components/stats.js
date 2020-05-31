@@ -33,7 +33,7 @@ const getMoviesByPeriod = (movies, period) => {
   if (period === `all-time`) {
     return movies;
   } else {
-    let moviesByPeriod = movies.filter((movie) => {
+    const moviesByPeriod = movies.filter((movie) => {
       const watchingDate = movie.watchingDate;
       return moment(watchingDate).isSame(new Date(), period);
     });
@@ -42,7 +42,7 @@ const getMoviesByPeriod = (movies, period) => {
 };
 
 const getAllGenres = (movies) => {
-  let genresItems = [];
+  const genresItems = [];
 
   movies.map((movie) => {
     genresItems.push(...movie.genre);

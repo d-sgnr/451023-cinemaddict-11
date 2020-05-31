@@ -67,7 +67,7 @@ export const maybePluralize = (noun, number, suffix = `s`) => {
 };
 
 export const makeArrayOfValues = (array, key) => {
-  let newItems = [];
+  const newItems = [];
 
   array.forEach((arrayItem) => {
     newItems.push(arrayItem[key]);
@@ -77,7 +77,7 @@ export const makeArrayOfValues = (array, key) => {
 };
 
 export const getObjectWithMaxValue = (array, key) => {
-  let maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
+  const maxValueObject = array.reduce((max, item) => max[key] > item[key] ? max : item);
 
   const index = array.indexOf(maxValueObject);
 
@@ -93,14 +93,26 @@ export const getObjectWithMaxValue = (array, key) => {
   return maxValueObject;
 };
 
-export const sortArray = (property, asc = false) => {
+export const sortArray = (property, asc = false, length = false) => {
   let sortOrder = 1;
 
   if (!asc) {
     sortOrder = -1;
   }
 
-  return (a, b) => {
+  if (length) {
+    return (a, b) => {
+      let result = 0;
+
+      if (a[property].length < b[property].length) {
+        result = -1;
+      } else if (a[property].length > b[property].length) {
+        result = 1;
+      }
+
+      return result * sortOrder;
+    };
+  } return (a, b) => {
     let result = 0;
 
     if (a[property] < b[property]) {

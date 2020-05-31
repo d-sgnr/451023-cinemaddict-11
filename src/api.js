@@ -25,56 +25,52 @@ const API = class {
 
   getMovie(id) {
     return this._load({
-        url: `movies/${id}`
-      })
-
-      .then((response) => response.json())
-      .then(Movie.parseMovie);
+      url: `movies/${id}`
+    })
+    .then((response) => response.json())
+    .then(Movie.parseMovie);
   }
 
   getMovies() {
     return this._load({
-        url: `movies`
-      })
-
-      .then((response) => response.json())
-      .then(Movie.parseMovies);
+      url: `movies`
+    })
+    .then((response) => response.json())
+    .then(Movie.parseMovies);
   }
 
   getComments(id) {
     return this._load({
-        url: `comments/${id}`
-      })
-
-      .then((response) => response.json())
-      .then(Comment.parseComments);
+      url: `comments/${id}`
+    })
+    .then((response) => response.json())
+    .then(Comment.parseComments);
   }
 
   updateMovie(id, data) {
-
     return this._load({
-        url: `movies/${id}`,
-        method: Method.PUT,
-        body: JSON.stringify(data.toRAW()),
-        headers: new Headers({
-          "Content-Type": `application/json`
-        })
+      url: `movies/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({
+        "Content-Type": `application/json`
       })
-      .then((response) => response.json())
-      .then(Movie.parseMovie);
+    })
+    .then((response) => response.json())
+    .then(Movie.parseMovie);
   }
 
   createComment(comment, id) {
     return this._load({
-        url: `comments/${id}`,
-        method: Method.POST,
-        body: JSON.stringify(comment.toRAW()),
-        headers: new Headers({
-          "Content-Type": `application/json`
-        })
+      url: `comments/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(comment.toRAW()),
+      headers: new Headers({
+        "Content-Type": `application/json`
       })
-      .then((response) => response.json())
-      .then(Comment.parseComment);
+    })
+    .then((response) => response.json())
+    .then(Comment.parseComment);
   }
 
   deleteComment(id) {
@@ -93,14 +89,14 @@ const API = class {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {
-        method,
-        body,
-        headers
-      })
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
+      method,
+      body,
+      headers
+    })
+    .then(checkStatus)
+    .catch((err) => {
+      throw err;
+    });
   }
 };
 

@@ -2,7 +2,6 @@ import PageComponent from "./components/page.js";
 import PageController from "./controllers/page.js";
 import FilterController from "./controllers/filter.js";
 import ProfileAvatarComponent from './components/profile-avatar.js';
-import FilterComponent from './components/filter.js';
 import StatsComponent from './components/stats.js';
 import MoviesQuantityComponent from './components/movies-quantity.js';
 import MoviesModel from "./models/movies.js";
@@ -12,14 +11,12 @@ import SiteMenuComponent, {
 } from "./components/site-menu.js";
 
 import {
-  RenderPosition,
   render
 } from './utils/render.js';
 
 import API from "./api.js";
 
 import {
-  MOVIES_COUNT,
   AUTHORIZATION,
   END_POINT,
 } from './const.js';
@@ -44,13 +41,6 @@ const pageComponent = new PageComponent();
 const pageController = new PageController(pageComponent, moviesModel, api);
 
 render(siteMainElement, pageComponent);
-
-const dateTo = new Date();
-const dateFrom = (() => {
-  const d = new Date(dateTo);
-  d.setDate(d.getDate() - 7);
-  return d;
-})();
 
 const getStatistics = () => {
   const statsComponent = new StatsComponent(moviesModel);
@@ -80,4 +70,4 @@ api.getMovies()
 
     render(siteHeaderElement, new ProfileAvatarComponent(moviesModel));
     render(siteFooterElement, new MoviesQuantityComponent(moviesModel));
-  })
+  });

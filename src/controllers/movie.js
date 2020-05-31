@@ -120,14 +120,6 @@ export default class MovieController {
     }
   }
 
-  createComment() {
-    const commentsListElement = this._moviePopupComponent.getElement().querySelector(COMMENTS_LIST_CLASS);
-
-    const newComment = new CommentController(commentsListElement, this._onDataChange);
-
-    newComment.render(EmptyComment);
-  }
-
   _removeComments() {
     this._showedCommentControllers.forEach((commentController) => commentController.destroy());
     this._showedCommentControllers = [];
@@ -152,7 +144,7 @@ export default class MovieController {
 
                 const newMovie = MovieModel.clone(movie);
                 newMovie.comments.push(movie.id);
-                this._onDataChange(this, movie, newMovie);
+                this._onDataChange(this, movie, newMovie, true);
               }))
         .catch(() => {
           this._commentsFormComponent.blockForm(false);
@@ -178,7 +170,7 @@ export default class MovieController {
             array.splice(index, 1);
           }
 
-          this._onDataChange(this, movie, newMovie);
+          this._onDataChange(this, movie, newMovie, true);
         })
         .catch(() => {
           commentController.shake();

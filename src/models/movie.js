@@ -17,7 +17,6 @@ export default class Movie {
     this.age = data[`film_info`][`age_rating`];
     this.comments = data[`comments`];
     this.watchingDate = data[`user_details`][`watching_date`];
-    this.commentsCount = this.comments.length;
 
     this.isWatchlist = Boolean(data[`user_details`][`watchlist`]);
     this.isWatched = Boolean(data[`user_details`][`already_watched`]);
